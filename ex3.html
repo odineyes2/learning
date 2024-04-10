@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+  <script src="https://unpkg.com/react@17.0.2/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/prop-types@15.7.2/prop-types.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel">
+    const root = document.getElementById("root");
+    function MinuteToHour() {
+      const [minutes, setMinutes] = React.useState();
+      const changeValue = (event) => {
+        setMinutes(event.target.value);
+      };
+      const [disable, setDisable] = React.useState(false);
+      const changeAct = () => {
+        reset();
+        setDisable((prev) => !prev);
+      };
+      const reset = () => {
+        setMinutes(0);
+      };
+      return (
+        <div>
+          <h3>Minute to hours</h3>
+          <label htmlFor="Minute">Minutes</label>
+          <input
+            id="Minute"
+            type="number"
+            placeholder="Minutes"
+            value={disable ? minutes * 60 : minutes}
+            onChange={changeValue}
+            disabled={disable}
+          ></input>
+          <label htmlFor="Hour">Hours</label>
+          <input
+            id="Hour"
+            type="number"
+            placeholder="Hours"
+            value={disable ? minutes : Math.round(minutes / 60)}
+            onChange={changeValue}
+            disabled={!disable}
+          ></input>
+          <button id="reset" onClick={reset}>
+            Reset
+          </button>
+          <button id="flip" onClick={changeAct}>
+            Flip
+          </button>
+        </div>
+      );
+    }
+    function KmTom() {
+      return <h3>kmTom</h3>;
+    }
+    function App() {
+      const [index, setIndex] = React.useState("0");
+      const changeIndex = (event) => {
+        console.log(event.target.value);
+        setIndex(event.target.value);
+      };
+      return (
+        <div>
+          <h1>Super Convertor</h1>
+          <hr />
+          <select onChange={changeIndex}>
+            <option value="0">Select Convertor</option>
+            <option value="1">MinuteToHour</option>
+            <option value="2">KmTom</option>
+          </select>
+          <div>
+            {index === "0" ? <h3>Select Convertor</h3> : null}
+            {index === "1" ? <MinuteToHour /> : null}
+            {index === "2" ? <KmTom /> : null}
+          </div>
+        </div>
+      );
+    }
+    ReactDOM.render(<App />, root);
+  </script>
+</html>
