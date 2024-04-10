@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+  <script src="https://unpkg.com/react@17.0.2/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel">
+    const root = document.getElementById("root");
+    
+    function MinuteToHour() {
+      const [amount, setAmount] = React.useState(0);
+      const [flip, setFlip] = React.useState(false);
+      const onChange = (event) => {
+        setAmount(event.target.value);
+      };
+      const reset = () => {
+        setAmount(0);
+      };
+      const onFlip = () => {
+        reset()
+        setFlip((current)=>!current);
+      }
+      return (
+        <div>          
+          <label htmlfor="minutes">Minute</label>
+          <input
+            id="minutes"
+            placeholder="Minute"
+            value={flip ? amount*60 : amount}
+            type="number"
+            onChange={onChange}
+            disabled={flip}
+          />
+          <label htmlfor="hours">Hour</label>
+          <input
+            id="hours"
+            placeholder="Hour"
+            value={flip ? amount : Math.round(amount / 60)}
+            type="number"
+            onChange={onChange}
+            disabled={!flip}
+          />
+          <button onClick={reset}>Reset</button>
+          <button onClick={onFlip}>Flip</button>
+        </div>
+      );
+    }
+    function KmToMiles() {
+        return <h3>KMm to Miles</h3>;          
+    }
+
+    function App() {
+        const [index, setIndex] = React.useState("1");
+        const onSelect = (event) => {
+            setIndex(event.target.value);
+            console.log(`run with ${index}`);
+        }
+        return (
+            <div>
+                <h1>Unit Converter</h1>            
+                <select onChange={onSelect}>
+                    <option value="1">Select Index</option>
+                    <option value="2">MinuteToHour</option>
+                    <option value="3">KmToMiles</option>
+                </select>
+                <hr />
+                {index==="1"?"Please Select Unit":null}
+                {index==="2"?<MinuteToHour />:null}
+                {index==="3"?<KmToMiles />:null} // 컴포넌트의 첫글자는 대문자. 소문자로 입력시 html 태그로 인식함
+            </div>            
+        )        
+    }  
+    ReactDOM.render(<App />, root);
+  </script>
+</html>

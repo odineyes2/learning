@@ -1,0 +1,8 @@
+.active{
+    color: tomato;
+}
+
+h1 {
+    color: cornflowerblue;
+    transition:color .5s ease-in-out;
+}
