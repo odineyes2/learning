@@ -91,3 +91,5 @@
       컴포넌트파괴시 실행할 코드
       }
       ,[디펜던시]);에서
+
+git push origin HEAD:main //현재 HEAD가 가리키는 커밋을 main 브랜치로 푸시
