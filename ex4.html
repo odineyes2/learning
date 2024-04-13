@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+  <script src="https://unpkg.com/react@17.0.2/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/prop-types@15.7.2/prop-types.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel">
+    const root = document.getElementById("root");
+    function App() {
+      const [toDo, setToDo] = React.useState("");
+      const [toDos, setToDos] = React.useState([]);
+      const onChange = (event) => {
+        setToDo(event.target.value);
+      };
+      const onClick = (event) => {
+        event.preventDefault();
+        if (toDo === "") {
+          return;
+        }
+        setToDo("");
+        setToDos((currArr) => [toDo, ...currArr]);
+      };
+      //   console.log(toDos);
+      return (
+        <div>
+          <h3>Hello</h3>
+          <form onClick={onClick}>
+            <input
+              onChange={onChange}
+              value={toDo}
+              type="text"
+              placeholder="Write your todo..."
+            ></input>
+            <button>Submit</button>
+          </form>
+          <hr />
+          <ul>
+            {toDos.map((item, index) => (
+              <li key={index}>{item}</li>                     
+            ))}
+          </ul>
+        </div>
+      );
+    }
+    ReactDOM.render(<App />, root);
+  </script>
+</html>
