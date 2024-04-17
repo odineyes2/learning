@@ -74,3 +74,10 @@
 # repeat()
     grid-template-columns: repeat(2, 1fr); // = grid-template-columns: 1fr 1fr;
 
+# grid-auto-flow & grid-auto-rows & grid-auto-columns // html요소가 추가되는 경우 어떻게 처리할지 결정하는 프로퍼티
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+
+    grid-auto-flow: row; // 새로 추가될 요소가 행이나 열 중 어느 요소로 늘어날지 결정하는 프로퍼티 기본값은 row(행추가)
+    grid-auto-rows: 1fr; // 추가될 행의 크기를 지정
+    grid-auto-columns: 1fr; // 추가될 열의 크기를 지정
