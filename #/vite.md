@@ -5,7 +5,7 @@
 - [ ] √ Project name: ... css-layout-masterclass
 - [ ] √ Select a framework: » Vanilla
 - [ ] √ Select a variant: » JavaScript
-- [ ] cd css-layout-masterclass
+- [ ] cd vite-project
 - [ ] npm install
 - [ ] code . // Open Vscode
 - [ ] npm run dev
