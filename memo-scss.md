@@ -45,3 +45,73 @@ body {
 ```
 
 # Nesting - css를 중첩해서 사용
+
+(before Nesting)
+
+```
+$bfColor: red;
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  display: flex;
+  gap: 10px;
+}
+
+ul li {
+  background-color: tomato;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 7px;
+}
+
+ul li:hover {
+  opacity: 0.8;
+}
+
+ul li:hover a {
+  color: black;
+}
+
+ul li a {
+  text-decoration: none;
+  color: white;
+  text-transform: uppercase;
+}
+```
+
+use Nesting
+
+```
+ul {
+  list-style-type: none;
+  padding: 0;
+  display: flex;
+  gap: 10px;
+  li {
+    background-color: tomato;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 7px;
+    &:hover {
+      opacity: 0.8;
+      a {
+        color: gray;
+      }
+    }
+    a {
+      text-decoration: none;
+      color: white;
+      text-transform: uppercase;
+    }
+  }
+}
+```
+
+- 장점: 짧고 체계적이다.
+- 주의점 : 컴포넌트 별로 묶어라.
