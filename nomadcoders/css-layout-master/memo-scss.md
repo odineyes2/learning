@@ -141,3 +141,96 @@ ul {
   background-color: yellow;
 }
 ```
+
+# mixins - css를 function 처럼 사용
+```
+@mixin alert($bgColor, $borderColor);{
+  margin: 10px;
+  padding: 10px 20px;;
+  border-radius: 10px;
+  border: 1px dashed $borderColor;
+  background-color: $bgColor;
+}
+.succes {
+  @include alert(green,blue);  
+}
+.error {
+  @include alert(red,white);
+}
+.warning{
+  @include alert(yellow,black);
+}
+```
+
+# responsive web page - mixins & mediaQuery
+
+## mixins - @content - @mixin에 내용을 추가하고자 하는 경우.
+```
+@mixin alert($bgColor, $borderColor){
+  margin: 10px;
+  padding: 10px 20px;;
+  border-radius: 10px;
+  border: 1px dashed $borderColor;
+  background-color: $bgColor;
+  @content;
+}
+.succes {
+  @include alert(green,blue){
+    font-size: 12px;
+  };  
+}
+.error {
+  @include alert(red,white){
+    font-decoration: underline;
+  };
+}
+.warning{
+  @include alert(yellow,black){
+    text-transform: uppercase;
+  };
+}
+```
+
+## var
+```
+$breakpoint-sm: 480px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1200px;
+
+@mixin smallDevice{
+  @media screen and (min-width: $breakpoint-sm){
+    @content;
+  }
+}
+@mixin mediumDevice{
+  @media screen and (min-width: $breakpoint-md){
+    @content;
+  }
+}
+@mixin largeDevice{
+  @media screen and (min-width: $breakpoint-lg){
+    @content;
+  }
+}
+@mixin xLargeDevice{
+  @media screen and (min-width: $breakpoint-xl){
+    @content;
+  }
+}
+
+body{
+  @include smallDevice{
+    background-color: blue;
+  }
+  @include mediumDevice{
+    background-color: red;
+  }
+  @include largeDevice{
+    background-color: purple;
+  }
+  @include xLargeDevice{
+    background-color: pink;
+  }
+}
+```
