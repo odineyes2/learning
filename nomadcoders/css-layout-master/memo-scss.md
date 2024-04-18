@@ -115,3 +115,29 @@ ul {
 
 - 장점: 짧고 체계적이다.
 - 주의점 : 컴포넌트 별로 묶어라.
+
+# @extend - css를 각 요소에 공통 적용
+
+```{style.scss}
+%alert{
+  margin: 10px;
+  padding: 10px 20px;;
+  border-radius: 10px;
+  border: 1px dashed black;
+}
+
+.succes {
+  @extend %alert;
+  background-color: green;
+}
+
+.error {
+  @extend %alert;
+  background-color: red;
+}
+
+.warning{
+  @extend %alert;
+  background-color: yellow;
+}
+```
