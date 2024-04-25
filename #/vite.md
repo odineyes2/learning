@@ -1,4 +1,6 @@
-# vite 개발용 서버 시작하기
+# vite.md
+
+## vite 개발용 서버 시작하기
 
 - [ ] Open Terminal
 - [ ] npm create vite@latest
@@ -10,7 +12,7 @@
 - [ ] code . // Open Vscode
 - [ ] npm run dev
 
-# vite project에서 사용하는 방법
+## vite project에서 사용하는 방법
 
 - [ ] cd vite-project
 - [ ] npm add -D sass
@@ -18,7 +20,7 @@
 - [ ] link to ./styles.style.scss
 - [ ] npm run dev // 개발용 웹서버 시작
 
-# 배포용 파일 빌드
+## 배포용 파일 빌드
 
 - [ ] npm run build
 - [ ] dist 폴더 생성 확인(css파일 생성)
