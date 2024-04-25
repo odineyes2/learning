@@ -116,6 +116,17 @@ ul {
 - 장점: 짧고 체계적이다.
 - 주의점 : 컴포넌트 별로 묶어라.
 
+## 짚고 갈 테크닉스
+
+&:hover{
+
+}
+
+list-style-type: none;
+opacity: 0.8;
+text-decoration: none;
+text-transform: uppercase;
+
 # @extend - css를 각 요소에 공통 적용
 
 ```{style.scss}
@@ -143,6 +154,7 @@ ul {
 ```
 
 # mixins - css를 function 처럼 사용
+
 ```
 @mixin alert($bgColor, $borderColor);{
   margin: 10px;
@@ -152,7 +164,7 @@ ul {
   background-color: $bgColor;
 }
 .succes {
-  @include alert(green,blue);  
+  @include alert(green,blue);
 }
 .error {
   @include alert(red,white);
@@ -165,6 +177,7 @@ ul {
 # responsive web page - mixins & mediaQuery
 
 ## mixins - @content - @mixin에 내용을 추가하고자 하는 경우.
+
 ```
 @mixin alert($bgColor, $borderColor){
   margin: 10px;
@@ -177,7 +190,7 @@ ul {
 .succes {
   @include alert(green,blue){
     font-size: 12px;
-  };  
+  };
 }
 .error {
   @include alert(red,white){
@@ -192,11 +205,14 @@ ul {
 ```
 
 ## var
+
 ```
 $breakpoint-sm: 480px;
 $breakpoint-md: 768px;
 $breakpoint-lg: 1024px;
 $breakpoint-xl: 1200px;
+
+## MediaQuery & mixin = Responsive Web!!
 
 @mixin smallDevice{
   @media screen and (min-width: $breakpoint-sm){
@@ -234,3 +250,10 @@ body{
   }
 }
 ```
+
+## 용도별 기호들
+
+$ : css 변수
+& : nesting 시 반복되는 태그 대신 사용
+% : extend 를 정의할 때 사용
+@ : mixin 정의 시 사용
