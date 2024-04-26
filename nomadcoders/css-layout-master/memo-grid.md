@@ -92,6 +92,8 @@ grid-column-end: -1;
 
 # 그리드와 박스의 분리 개념
 
+// 1fr 로는 작동하지 않고 px로 해야 빈 공간이 생기면서 작동함
+
 .container{
 justify-content: stretch; // 기본값. 박스의 크기가 정해지지 않은 경우 그리드의 넓이(또는 높이)까지 늘인다.
 align-items: stretch; // 상동
