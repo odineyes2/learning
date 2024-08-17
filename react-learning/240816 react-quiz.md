@@ -7,7 +7,7 @@
 - 동적 리액트 컴포넌트 생성 예제
     - Button 컴포넌트 외부화
     - state
-    - prop    
+    - prop
 
 ## api 로딩 컴포넌트
     - url : https://www.data.go.kr/catalog/15025486/fileData.json
