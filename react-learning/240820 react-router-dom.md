@@ -17,7 +17,6 @@ ReactDOM.createRoot(root).render(
 
 ```
 
-
 document.querySelector("");
 ==> 
 .className
