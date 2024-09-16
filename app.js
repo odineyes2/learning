@@ -7,7 +7,17 @@ const commentRouter = require("./routes/comments");
 
 const app = express();
 
+sequelize
+  .sync({ extended: false })
+  .then(() => {
+    console.log("successfully db connected..");
+  })
+  .catch((err) => {
+    console.error(err);
+  });
+
 app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
 app.use("/", indexRouter);
 app.use("/users", userRouter);
