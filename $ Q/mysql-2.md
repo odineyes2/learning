@@ -1,0 +1,366 @@
+# sequelize
+
+## 1. sequelize 설치
+
+- $ npm sequelize sequelize-cli mysql2
+- $ npm -D nodemon
+- $ npm morgan nunjucks
+
+## 2. sequelize 실행하기
+
+- $ npx sequelize init
+
+## 3. ./config/config.json 수정
+
+- 자동으로 생성되는 json 파일을 열어서 내가 사용할 데이터베이스 설정으로 바꾸어서 저장
+
+## 4. ./models/index.js 수정
+
+```javascript
+const Sequelize = require("sequelize");
+
+const env = process.env.NODE_ENV || "development";
+const config = require("../config/config.json")[env];
+const db = {};
+
+const sequelize = new Sequelize(
+  config.database,
+  config.username,
+  config.password,
+  config
+);
+
+db.sequelize = sequelize;
+
+module.exports = db;
+```
+
+## 5. package.json 실행 명령어 등록
+
+```json
+"script" : {
+  "start" : "nodemon app",
+  }
+```
+
+## 6. mysql 연결하기 => /app.js
+
+```javascript
+const express = require("express");
+const path = require("path");
+const morgan = require("morgan");
+
+const { sequelize } = require("./models");
+
+const app = express();
+app.set("port", process.env.PORT || 3001);
+
+sequelize
+  .sync({ force: false })
+  .then(() => {
+    console.log("db successfully connected...");
+  })
+  .catch((err) => {
+    console.error(err);
+  });
+
+app.use(morgan("dev"));
+app.use(express.static(path.join(__dirname, "public")));
+app.use(express.json());
+app.use(express(express.urlencoded({ extended: false })));
+
+app.use((req, res, next) => {
+  const error = new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
+  error.status = 404;
+  next(error);
+});
+
+app.use((err, req, res, next) => {
+  res.locals.message = err.message;
+  res.locals.error = process.env.NODE_ENV !== "production" ? err : {};
+  res.status(err.status || 500);
+  res.render("error");
+});
+
+app.listen(app.get("port"), () => {
+  console.log(`${app.get("port")} waiting on...`);
+});
+```
+
+## 7. user 모델 정의하기 => /models/user.js
+
+```javascript
+const Sequelize = require("sequelize");
+
+class User extends Sequelize.Model {
+  static initiate(sequelize) {
+    User.init(
+      {
+        name: {
+          type: Sequelize.STRING(20),
+          allowNull: false,
+          unique: true,
+        },
+        age: {
+          type: Sequelize.INTEGER.UNSIGNED,
+          allowNull: false,
+        },
+        married: {
+          type: Sequelize.BOOLEAN,
+          allowNull: false,
+        },
+        comment: {
+          type: Sequelize.TEXT,
+          allowNull: true,
+        },
+        created_at: {
+          type: Sequelize.DATE,
+          allowNull: false,
+          defaultValue: Sequelize.NOW,
+        },
+      },
+      {
+        sequelize,
+        timestamps: false,
+        underscored: false,
+        modelName: "User",
+        tableName: "users",
+        paranoid: false,
+        charset: "utf8",
+        collate: "utf8_general_ci",
+      }
+    );
+  }
+
+  static associate(db) {
+    db.User.hasMany(db.Comment, { foreignKey: "commenter", sourceKey: "id" });
+  }
+}
+
+module.exports = User;
+```
+
+## 8. comment 모델 정의하기 => /models/comment.js
+
+```javascript
+const Sequelize = require("sequelize");
+
+class Comment extends Sequelize.Model {
+  static initiate(sequelize) {
+    Comment.init(
+      {
+        comment: {
+          type: Sequelize.STRING(100),
+          allowNull: false,
+        },
+        created_at: {
+          type: Sequelize.DATE,
+          allowNull: true,
+          defaultValue: Sequelize.NOW,
+        },
+      },
+      {
+        sequelize,
+        timestamps: false,
+        modelName: "Comment",
+        tableName: "comments",
+        paranoid: false,
+        charset: "utf8mb4",
+        collate: "utf8mb4_general_ci",
+      }
+    );
+  }
+
+  static associate(db) {
+    db.Comment.belongsTo(db.User, { foreignKey: "commenter", targetKey: "id" });
+  }
+}
+
+module.exports = Comment;
+```
+
+## 9. ./models/index.js 에 모델 연결하기
+
+```javascript
+const Sequelize = require("sequelize");
+const User = require("./user");
+const Comment = require("./comment");
+
+const env = process.env.NODE_ENV || "development";
+const config = require("../config/config.json")[env];
+const db = {};
+
+const sequelize = new Sequelize(
+  config.database,
+  config.username,
+  config.password,
+  config
+);
+
+db.sequelize = sequelize;
+
+db.User = User;
+db.Comment = Comment;
+
+User.initiate(sequelize);
+Comment.initiate(sequelize);
+
+User.associate(db);
+Comment.associate(db);
+
+module.exports = db;
+// db 객체에 모델을 담았다.
+// 앞으로 db 객체를 require 해서 User와 Comment에 접근할 수 있다.
+```
+
+## 10. 관계 정의하기 1:N id 와 comment
+
+```javascript ./models/user.js
+    static associate(db) {
+        db.User.hasMany(db.Comment, { foreignKey: "commenter", sourceKey: "id" });
+    }
+```
+
+```javascript ./models/comment.js
+    static associate(db) {
+        db.Comment.belongsTo(db.User, { foreignKey: "commenter", targetKey: "id" });
+    }
+```
+
+## 11. 관계 정의하기 1:1 => id 와 UserId
+
+```javascript /models/user.js
+db.User.hasOne(db.Info, { foreignKey: "UserId", sourceKey: "id" });
+```
+
+```javascript /models/info.js
+db.Info.belongsTo(db.User, { foreignKey: "UserId", targetKey: "id" });
+// belongsTO 메서드가 있는 쪽에서 새로운 필드(UserId)가 생성되기 때문에 바꾸어서 작성하면 안된다.
+```
+
+## 12. 관계 정의하기 N:M => post 와 hashTag
+
+```javascript
+db.Post.belongsToMany(db.HashTag, { through: "PostHashTag" });
+```
+
+```javascript
+db.HashTag.belongsToMany(db.Post, { through: "PostHashTag" });
+// n:m 관계 상 새로운 모델이 생성된다.
+// 자동으로 생성된 모델에 접근은 db.sequelize.models.PostHashTag 로 한다.
+```
+
+## 13. 시퀄라이즈 CRUD - C
+
+```javascript
+// sql : INSERT INTO nodejsDB.users (name, age, married, comment) VALUES ('Jeonghun', 38, 1, '남편');
+const { User } = require("../models"); // /models/index.js 안에 있는 User 객체
+User.create({
+  name: "Jeonghun",
+  age: 38,
+  married: true,
+  comment: "husband",
+});
+```
+
+## 14. 시퀄라이즈 CRUD - R
+
+```javascript
+//SELECT name,age FROM nodejsDB.users WHERE married = 1 AND age > 30 ORDER BY age ASC LIMIT 1 OFFSET 1;
+const { User } = require("../models");
+const { Op } = require("../models");
+User.findAll({
+  attribute: ["name", "age"],
+  where: {
+    married = true,
+    age : {[Op.gt]:30},
+  },
+  order: [['age','ASC']],
+  limit: 1,
+  offset: 1,
+});
+```
+
+## 15. 시퀄라이즈 CRUD - U
+
+```javascript
+// UPDATE nodejsDB.users SET comment = '나래의 남편' WHERE id = 1;
+User.update(
+  {
+    comment: "나래의 남편",
+  },
+  {
+    where: { id: 2 },
+  }
+);
+```
+
+## 16. 시퀄라이즈 CRUD - D
+
+```javascript
+// DELETE FROM nodejsDB.users WHERE id = 2;
+User.destroy({
+  where: { id: 2 },
+});
+```
+
+## 17. 관계 쿼리 => 특정 유저를 조회하면서 그 유저를 댓글도 같이 조회
+
+```javascript => include 속성
+const user = await User.findOne({
+  attributes: ["id", "name"],
+  where: {
+    id: 1,
+  },
+  include: [
+    {
+      model: Comment,
+      attribute: ["id", "comment"],
+    },
+  ],
+});
+console.log(user);
+```
+
+```javascript => getter 메서드
+const user = await User.findOne({
+  where: {
+    id: 1,
+  },
+});
+const comments = await user.getComments({
+  attribute: ["comment"],
+});
+```
+
+## 18. 관계 쿼리를 이용해서 CRUD - C => addComment, addComments
+
+```javascript
+const user = await User.findOne({});
+const comment = await user.Comment.create();
+await user.addComment(comment);
+```
+
+```javascript - 여러 개 추가
+const user = await User.findOnd({});
+const comment1 = await user.Comment.create();
+const comment2 = await user.Comment.create();
+await user.addComment([comment1, comment2]);
+```
+
+## 19. 관계 쿼리를 이용해서 CRUD - U => setComments
+
+## 20. 관계 쿼리를 이용해서 CRUD - D => removeComments
+
+```javascript
+const user = await User.findOne({});
+await user.removeComments();
+```
+
+## 21. SQL 직접 쿼리
+
+```javascript
+const [result, metadata] = await sequelize.query("SELECT * FROM comments");
+```
+
+## 22. 시퀄라이즈 CRUD 프로젝트
