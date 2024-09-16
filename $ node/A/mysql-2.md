@@ -140,6 +140,17 @@ class User extends Sequelize.Model {
 module.exports = User;
 ```
 
+## 7.1. Sequelize 자료형
+
+- VARCHAR(100) : STRING(100)
+- INT : INTEGER
+- TINYINT : BOOLEAN
+- DATETIME : DATE
+- INT UNSIGNED : INTEGER.UNSIGNED
+- NOT NULL : allowNull: false
+- UNIQUE : unique: true
+- DEFAULT NOW() : defaultValue: Sequelize.NOW
+
 ## 8. comment 모델 정의하기 => /models/comment.js
 
 ```javascript

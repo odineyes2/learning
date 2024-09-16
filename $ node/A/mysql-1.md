@@ -4,16 +4,26 @@
 
 - $ mysql - h localhost -u root -p
 
-## 2. 데이터베이스 생성
+## 2. 우분투 리눅스 CLI 환경에서 mysql 설치 및 root 계정으로 접속
+
+- $ sudo apt-get update
+- $ sudo apt-get install -y mysql-server-8.0
+- $ sudo mysql
+- > ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_natove_password by 'password';
+- > exit;
+- $ sudo mysql_secure_installation
+- $ mysql -h localhost -u root -p
+
+## 3. 데이터베이스 생성
 
 - > CREATE SCHEMA 'nodejsDB' DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_general_ci;
 - > use nodejsDB;
 
-## 3. 테이블 모두 보기
+## 4. 테이블 모두 보기
 
 - > SHOW TABLES;
 
-## 4. users 테이블 생성 하기
+## 5. users 테이블 생성 하기
 
 ```sql
 > CREATE TABLE nodejsDB.users(
@@ -29,13 +39,13 @@
     ENGINE = InnoDB;
 ```
 
-## 5. users 테이블 삭제하기
+## 6. users 테이블 삭제하기
 
 ```sql
 > DROP TABLE nodejsDB.users;
 ```
 
-## 6. comments 테이블 생성하기
+## 7. comments 테이블 생성하기
 
 ```sql
 > CREATE TABLE nodejsDB.comments (
@@ -54,7 +64,7 @@
     ENGINE = InnoDB;
 ```
 
-## 7. 테이블에 자료 입력하기
+## 8. 테이블에 자료 입력하기
 
 ```sql
 > INSERT INTO nodejsDB.users (name, age, married, comment) VALUES ( 'Jeonghun', 38, 1, '자기소개');
@@ -62,7 +72,7 @@
 > INSERT INTO nodejsDB.comments (commenter, comment) VALUES ( 1, '정훈의 댓글');
 ```
 
-## 8. 테이블 조회하기
+## 9. 테이블 조회하기
 
 ```sql
 > SELECT * FROM users;
@@ -70,13 +80,13 @@
 > SELECT name, age FROM nodejsDB.users ORDER BY age DESC LIMIT 1 OFFSET 1;
 ```
 
-## 9. 테이블 수정하기
+## 10. 테이블 수정하기
 
 ```sql
 > UPDATE nodejsDB.users SET married = 1 WHERE id = 1;
 ```
 
-## 10. 테이블의 데이터 삭제하기
+## 11. 테이블의 데이터 삭제하기
 
 ```sql
 > DELETE FROM nodejsDB.users WHERE ID = 2;
