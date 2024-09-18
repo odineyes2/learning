@@ -2,18 +2,219 @@
 
 ## mongodb 설치하기
 
-## mongosh 설치하기
+- <https://mongodb.com/try/download/community> 에서 내려받을 수 있습니다.
 
-## mongosh 로그인 계정 생성하기
+## mongod 실행해보기
+
+- 설치폴더로 이동
+- $ mongod --ipv6
+- mongodb를 사용하려면 항상 이 데몬을 실행해놓아야 한다.
+- 아니면 백그라운드로 동작하도록 설정해야 한다.
+
+## mongosh 설치하기 및 실행해보기
+
+- <https://mongodb.com/try/download/shell> 에서 설치합니다.
+- $ mongosh
+
+## mongosh 관리자 계정 생성하기
+
+- > use admin
+- > db.createUser({user" "이름", pwd: "password", roles: ['root']})
+
+## mongod 를 로그인을 해야 접근할 수 있도록 변경하여 실행하기
+
+- $ mongod --ipv6 --auth
+
+## mongosh 재실행 --
+
+- $ mongosh admin -u 이름 -p password
 
 ## mongosh 로 CRUD - C => 데이터베이스 생성
 
+> use nodejsDB
+
+## 데이터베이스 확인
+
+> show dbs
+
+## 현재 사용 중인 데이터베이스 확인
+
+> db
+
 ## mongosh 로 CRUD - C => 컬렉션 생성
+
+- 컬렉션을 명시적으로 생성할 필요는 없다.
+- 앞으로 사용할 컬렉션에 바로 데이터를 입력하면 자동으로 생성된다.
+- > db.createCollection('users')
+- > db.createCollection('comments')
+
+## 컬렉션 확인
+
+- > show collections
 
 ## mongosh 로 CRUD - C => 데이터 입력
 
+- > db.users.insertOne({name: 'Jeonghun', age: 38, married: true, comment: 'Narae's husband, createdAt: new Date()});
+- > db.users.insertOne({name: 'Narae', age: 33, married: true, comment: 'Jeonghun's wife', createdAt: new Date()});
+
 ## mongosh 로 CRUD - R => 데이터 조회
+
+- > db.user.find({name:'Jeonghun'}, { \_id: 1 });
+
+## CRUD - R => comments에 userId를 넣어서 데이터 입력하기
+
+- > db.comments.insertOne({commenter: ObjectId('...'), comment('몽고쉘에서 입력한 댓글'), createdAt: new Date()});
+
+## mongosh 로 CRUD - R => 조건을 걸어서 데이터 조회
+
+- > db.users.find({});
+- > db.users.find({}, {\_id: 0, name: 1, married: 1});
+- > db.users.find({age: {$gt:35}, married: true}, {\_id:0, name:1, married:1});
+- > db.users.find({$or: [age: {$gt:35}, {married: true}]},{\_id:0, name:1, married:1})
+- > db.user.find({}, {\_id:0, name: f, age: 1}.sort({age: -1})) // -1: 내리차순, 1: 오름차순
+- > db.user.find({}, {\_id:0, name: f, age: 1}.sort({age: -1}).limit(1));
+- > db.user.find({}, {\_id:0, name: f, age: 1}.sort({age: -1}).limit(1)).skip(1);
 
 ## mongosh 로 CRUD - U => 데이터 수정
 
+- > db.users.updateOne({name:'Jeonghun'}, {$set: { comment: '수정한 필드'}});
+
 ## mongosh 로 CRUD - D => 데이터 삭제
+
+- > db.users.deleteOne({name: 'Jeonghun'});
+
+## mongoose 연결하기
+
+```javascript | schemas/index.js
+const mongoose = require("mongoose");
+
+const connect = () => {
+  if (process.env.NODE_ENV !== "production") {
+    mongoose.set("debug", true);
+  }
+  mongoose
+    .connect("mongodb://odineyes:Knrlove0923!@localhost:27017/admin", {
+      dbName: "nodejsDB",
+      useNewUrlParser: true,
+    })
+    .then(() => {
+      console.log("몽고디비 연결 성공...");
+    })
+    .catch((err) => {
+      console.log("연결 에러", err);
+    });
+};
+
+mongoose.connection.on("error", (error) => {
+  console.log("몽고디비 연결 에러", error);
+});
+mongoose.connection.on("disconnected", () => {
+  console.error("연결이 종료되었습니다. 재연결을 시도합니다...");
+  connect();
+});
+
+module.exports = connect;
+```
+
+## 서버 코드에 mongoose 연결 객체를 require 하고 실행해보기
+
+```javascript | app.js
+const express = require("express");
+const path = require("path");
+const morgan = require("morgan");
+const nunjucks = require("nunjucks");
+
+const connect = require("./schemas");
+
+const app = express();
+app.set("port", 3002);
+app.set("view engine", "html");
+nunjucks.configure("views", {
+  express: app,
+  watch: true,
+});
+connect();
+
+app.use(morgan("dev"));
+app.use(express.static(path.join(__dirname, "public")));
+app.use(express.urlencoded({ extended: false }));
+
+app.use((req, res, next) => {
+  const error = new Error(`${req.method} ${req.url} 라우터가 없습니다..`);
+  error.status = 404;
+  next(error);
+});
+
+app.use((err, req, res, next) => {
+  res.locals.message = err.message;
+  res.locals.error = process.env.NODE_ENV !== "production" ? err : {};
+  res.status(err.status || 500);
+  res.render("error");
+});
+
+app.listen(app.get("port"), () => {
+  console.log(app.get("port"), "번 포트에서 대기중...");
+});
+```
+
+## 몽구스 스키마 정의하기(users, comments)
+
+```javascript schemas/user.js
+const mongoose = require("mongoose");
+
+const { Schema } = mongoose;
+const userSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  age: {
+    type: Number,
+    required: true,
+  },
+  married: {
+    type: Boolean,
+    required,
+  },
+  comment: String,
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+module.exports = mongoose.model("User", userSchema);
+```
+
+```javascript | schemas/comment.js
+const mongoose = require("mongoose");
+
+const { Schema } = mongoose;
+const {
+  Types: { ObjectId },
+} = Schema;
+const commentSchema = new Schema({
+  commenter: {
+    type: ObjectId,
+    required: true,
+    ref: "User",
+  },
+  comment: {
+    type: String,
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+module.exports = mongoose.model("Comment", commentSchema);
+```
+
+## 몽구스 쿼리 수행하기
+
+```javascript | public/mongoose.js
+
+```
