@@ -1,0 +1,186 @@
+# http
+
+## 1. hello node
+
+```javascript
+const http = require('http');
+
+const server = http.createServer((req,res)=>{
+    res.writehead(200, { "Content-type" : "text/html; charset:utf-8" });
+    res.write(<p>hello server</p>);
+    res.end(<div>Hello node</div>);
+});
+
+server.listen(8080, ()=>{
+    console.log('8080 port waiting on...');
+});
+
+server.on("error", (err)=>{
+    console.error(err);
+});
+```
+
+## 2. hello node with fs
+
+```javascript
+const http = require('http');
+const fs = require('fs');
+
+const server = http.createServer(async (req,res)=>{
+    try {
+        const data = await fs.readFile('./public').promises;
+        res.writeHead(200, {"Content-type" : "text/html; charset:utf-8" });
+        res.end(data);
+    } catch(err){
+        console.error(err);
+        res.writeHead(500, { "Content-type": "text/plain; charset=utf-8" });
+        res.end(err.message);
+    }    
+});
+
+server.listen(3001, ()=>{
+    console.log('3031 Port Waiting on...');
+});
+```
+
+## 3. cookie => send cookie
+
+```javascript
+const http = require('http');
+const fs = require('fs');
+
+const server = http.createServer(async (req,res)=>{
+    try {
+        const data = await fs.readFile('./public').promises;
+        res.writeHead(200, { "Set-Cookie": "mycookie=text" });
+        res.end(data);
+    } catch(err){
+        console.error(err);
+        res.writeHead(500, { "Content-type": "text/plain; charset=utf-8" });
+        res.end(err.message);
+    }    
+});
+
+server.listen(3001, ()=>{
+    console.log('3031 Port Waiting on...');
+});
+
+```
+
+## 4. cookie => parse cookie & login pattern with cookie
+
+```javascript
+const http = require('http');
+const fs = require('fs').pormises;
+const path = require('path');
+
+const parseCookies = (cookie='')=>{
+    cookie
+        .split(';')
+        .map(v=v.split('='))
+        .reduce((acc, [k,v])=>{
+            acc[k, trim()] = decodeURIComponent(v);
+            return acc;
+        }, {});
+}
+
+const server = http.createServer(async (req,res)=>{
+    const cookies = parseCookies(req.headers.cookie);
+    if(req.url.startsWith('/login')){
+        const url = new URL(req.url, 'http://localhost:8082');
+        const name = url.searchParams.get('name');
+        const expires = new Date();
+        expires.setMinutes(expires.getMinutes()+5);
+        res.writeHead(302, {
+            Location: '/',
+            'Set-Cookie': `name=${encodeURLComponent(name)}; Expires=${expires.toGMTString()}; HttpOnly; Path=/`
+        });
+    res.end();
+    } else if(cookies.name) {   
+        res.writeHead(200, {'Content-type': 'text/plain; charset=utf-8'});
+        res.end(`${cookies.name}님 안녕하세요.`);
+    } else {
+        try {
+            const data = await fs.readFile(path.join(__dirname, 'cookie2.html'));
+            res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8'});
+            res.end(data);
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
+            res.end(err.message);
+        }
+    }
+})
+
+server.listen(8082, ()=>{
+    console.log('8082 Port waiting on ...');
+});
+```
+
+```html cookie2.html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form action="/login">
+      <input id="name" name="name" placeholder="이름을 입력하세요." />
+      <button id="login">login</button>
+    </form>
+  </body>
+</html>
+```
+
+## 5. session
+
+```javascript
+const http = require('http');
+const fs = require('fs').promises;
+const path = require('path');
+
+const parseCookies = (cookie="") => {
+    cookie
+    .split(';')
+    .map(v=>v.split('='))
+    .reduce((acc, [k,v])=>{
+        acc[k, trim()] = decodeURLComponent(v);
+        return acc;
+    },{});
+}
+
+const session = {};
+
+const server = http.createServer(async (req,res)=>{
+    const cookies = parseCookies(req.headers.cookie);
+    if(req.url.startsWith('/login')){
+        const url = new URL(req.url, 'http://localhost:8082');
+        const name = url.searchParams.get('name');
+        const expires = new Date();
+        expires.setMinutes(expires.getMinutes()+5);
+        const uniqueInt = Date.now();
+        session[uniqueInt] = {
+            name,
+            expires,
+        }
+        res.writeHead(302, {
+            Location: '/',
+            'Set-Cookie': `session=${uniqueInt} Expires=${expires.toGMTString()}; HttpOnly; Path=/`
+        });
+        res.end();
+    } else if(cookies.session && session[cookies[cookies.session].expires > new Date()]) {   
+        res.writeHead(200, {'Content-type': 'text/plain; charset=utf-8'});
+        res.end(`${session[cookies.session].name}님 안녕하세요.`);
+    } else {
+        try {
+            const data = await fs.readFile(path.join(__dirname, 'cookie2.html'));
+            res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8'});
+            res.end(data);
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
+            res.end(err.message);
+        }
+    }
+})
+```
