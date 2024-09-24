@@ -5,7 +5,7 @@ class User extends Sequelize.Model {
     User.init(
       {
         name: {
-          type: Sequelize.STRING(20),
+          type: Sequelize.STRING,
           allowNull: false,
           unique: true,
         },
@@ -15,9 +15,13 @@ class User extends Sequelize.Model {
         },
         married: {
           type: Sequelize.BOOLEAN,
-          allowNull: false,
+          allowNull: true,
         },
-        comment: {
+        Comment: {
+          type: Sequelize.TEXT,
+          allowNull: true,
+        },
+        createdAt: {
           type: Sequelize.DATE,
           allowNull: false,
           defaultValue: Sequelize.NOW,
@@ -30,14 +34,13 @@ class User extends Sequelize.Model {
         modelName: "User",
         tableName: "users",
         paranoid: false,
-        charset: "utf-8",
-        collate: "utf8_general_ci",
+        charset: "utf8bm4",
+        collate: "utf8mb4_general_ci",
       }
     );
   }
-
   static associate(db) {
-    db.User.hasMany(db.Comment, { foreignKey: "commenter", sourceKey: "id" });
+    db.User.hasMany(db.Comment, { foreignKey: "comment", sourceKey: "id" });
   }
 }
 

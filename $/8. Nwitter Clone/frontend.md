@@ -1,0 +1,269 @@
+# Nwitter frontend
+
+## 1. vite install
+
+- $ npm create vite@latest
+- $ npm i react-router-dom@6.14.2 styled-components@6.0.7 styled-reset
+- $ npm i @types/styled-components -D
+
+## 2. initial setting => hello react
+
+```html /index.html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nwitter clone coding.</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+```
+
+```typescript /src/main.tsx
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App.tsx";
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+```
+
+```typescript /src/App.tsx
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Layout from "./components/layout";
+import Home from "./routes/home";
+import Profile from "./routes/profile";
+import Login from "./routes/login";
+import CreateAccount from "./routes/create-account";
+import { createGlobalStyle } from "styled-components";
+import { reset } from "styled-reset";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
+      {
+        path: "",
+        element: <Home />,
+      },
+      {
+        path: "profile",
+        element: <Profile />,
+      },
+    ],
+  },
+]);
+
+function App() {
+  return (
+    <>
+      <div>Hello React</div>
+    </>
+  );
+}
+
+export default App;
+```
+
+## 3. router
+
+```typescript \src\App.tsx
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Layout from "./components/layout";
+import Home from "./routes/home";
+import Profile from "./routes/profile";
+import Login from "./routes/login";
+import CreateAccount from "./routes/create-account";
+import { createGlobalStyle } from "styled-components";
+import { reset } from "styled-reset";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
+      {
+        path: "",
+        element: <Home />,
+      },
+      {
+        path: "profile",
+        element: <Profile />,
+      },
+    ],
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/create-account",
+    element: <CreateAccount />,
+  },
+]);
+
+const GlobalStyles = createGlobalStyle`
+  ${reset};
+  body{
+    background-color : black;
+    color: white;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
+  }
+`;
+
+function App() {
+  return (
+    <>
+      <GlobalStyles />
+      <RouterProvider router={router} />
+    </>
+  );
+}
+
+export default App;
+```
+
+```typescript \src\routes\home.tsx
+export default function Home() {
+  return <h1>Home</h1>;
+}
+```
+
+```typescript \src\routes\login.tsx
+export default function Login() {
+  return <h1>Login</h1>;
+}
+```
+
+```typescript \src\routes\profile.tsx
+export default function Profile() {
+  return <h1>Profile</h1>;
+}
+```
+
+```typescript \src\routes\create-account.tsx
+export default function CreateAccount() {
+  return <h1>CreateAccount</h1>;
+}
+```
+
+## 4. loading page
+
+```typescript /App.tsx
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { useEffect, useState } from "react";
+import Layout from "./components/layout";
+import Home from "./routes/home";
+import Profile from "./routes/profile";
+import Login from "./routes/login";
+import CreateAccount from "./routes/create-account";
+import { createGlobalStyle } from "styled-components";
+import { reset } from "styled-reset";
+import LoadingScreen from "./components/loading-screen";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
+      {
+        path: "",
+        element: <Home />,
+      },
+      {
+        path: "profile",
+        element: <Profile />,
+      },
+    ],
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/create-account",
+    element: <CreateAccount />,
+  },
+]);
+
+const GlobalStyles = createGlobalStyle`
+  ${reset};
+  body{
+    background-color : black;
+    color: white;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
+  }
+`;
+
+function App() {
+  const [isLoading, setLoading] = useState(true);
+  const init = async () => {
+    // firebase code
+    setTimeout(() => setLoading(false), 5000);
+    // setLoading(false);
+  };
+  useEffect(() => {
+    init();
+  }, []);
+  return (
+    <>
+      <GlobalStyles />
+      {isLoading ? <LoadingScreen /> : <RouterProvider router={router} />}
+    </>
+  );
+}
+
+export default App;
+```
+
+```typescript /components/loading-screen.tsx
+import { styled } from "styled-components";
+
+const Wrapper = styled.div`
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Text = styled.span`
+  font-size: 24px;
+`;
+
+export default function LoadingScreen() {
+  return (
+    <Wrapper>
+      <Text>Loading...</Text>
+    </Wrapper>
+  );
+}
+```
+
+## 5. firebase initialize
+
+- firebase 가입 firebase console 생성
+- $ npm install firebase@10.1.0
+
+```typescript /src/firebase.ts
+// firebase console page에서 복붙
+import { initializeApp } from "firebase/app";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD_P7CVPnQs40F6SGOKgJediKvyC4EIhyQ",
+  authDomain: "nwitter-reloaded-a2982.firebaseapp.com",
+  projectId: "nwitter-reloaded-a2982",
+  storageBucket: "nwitter-reloaded-a2982.appspot.com",
+  messagingSenderId: "534013320393",
+  appId: "1:534013320393:web:d1f8d82cdc5dbbc2db0118",
+};
+
+const app = initializeApp(firebaseConfig);
+```
