@@ -1,29 +1,33 @@
 
-## 1. TS 환경 Setup 초기 설정에 필요한 것은?
+# TS Quiz
 
-- project 시작
-    - $ npx create-react-app my-app --template typescript 
-    - $ npm create vite@latest [프로젝트 명] -- --template react-ts
+## 1. TS 실습 환경 Setup
 
-- typescript 설치
-    - $ npm i -D typescript
+### project 시작
 
-- 편의적 패키지 설치
-    - ts-node
-    - nodemon
+- $ npx create-react-app my-app --template typescript 
+- $ npm create vite@latest [프로젝트 명] -- --template react-ts
 
-- package.json 생성 및 수정
-    - $ npm init -y $
+### typescript 설치
 
-    ```JSON package.json 변경
-    // main 삭제
+- $ npm i -D typescript
 
-    "script" : {
-        "build": "tsc" 
-    }
+### 편의적 패키지 설치
 
-    ```
+- ts-node
+- nodemon
 
+### package.json 생성 및 수정
+
+- $ npm init -y $
+
+```JSON package.json 변경
+// main 삭제
+
+"script" : {
+    "build": "tsc" 
+}
+```
 
 ## 2. 변수 선언 시 명시적으로 데이터 타입을 정하고자 할 때의 사용 방법은?
 
@@ -58,7 +62,7 @@ const JhScores : scores = [1,2,3];
 
 ```
 
-## 5. 객체를 생성하고 타입 별칭으로 구성요소의 모양을 지정하고 그 중 하나를 선택적으로 지정하라.
+## 5. 객체를 생성하고 타입 별칭으로 구성요소의 모양을 지정하고 그 중 하나를 선택적으로 지정하라
 
 ```typescript
 
@@ -75,7 +79,7 @@ const Player : User = {
 
 ```
 
-## 6. 튜플을 생성하라.
+## 6. 튜플을 생성하라
 
 ```typescript
 
@@ -83,9 +87,9 @@ const player : [ string, number, boolean ] = [ "kim", 12, true ]
 
 ```
 
-## 7. 함수 정의 및 콜시그니처 사용 
+## 7. 함수 정의 및 콜시그니처 사용
 
-- 함수을 정의하기 전에 함수의 매개변수와 리턴값을 먼저 정의할 수 있다. 
+- 함수을 정의하기 전에 함수의 매개변수와 리턴값을 먼저 정의할 수 있다.
 - 이것을 콜 시그니처라고 한다.
 - 콜 시그니처에는 함수의 매개변수와 리턴값의 데이터 타입을 정의하고
 - 함수의 정의문에는 함수의 로직만 기입한다.
@@ -125,7 +129,22 @@ const add : Add = function (a,b){
 }
 ```
 
-## 8. 제네릭를 이용하여 여러가지 유형의 인자를 복합적으로 가질 수 있는 함수를 정의하라.
+## 8. optional parameter
+
+```Typescript
+
+type Add = {
+    (a:number, b:number) : number 
+    (a:number, b:number, c:number) : number
+}
+const add: Add = (a,b,c?)=>{    
+    if(c) return a+b+c
+    return a+b;
+}
+
+```
+
+## 9. 제네릭를 이용하여 여러가지 유형의 인자를 복합적으로 가질 수 있는 함수를 정의하라
 
 ```typescript
 
@@ -142,7 +161,7 @@ superPrint(["1","2",3]);
 
 ```
 
-## 9. class를 사용하여 객체의 모양을 지정하고 인스턴스를 생성하라.
+## 9. class를 사용하여 객체의 모양을 지정하고 인스턴스를 생성하라
 
 ```typescript
 
@@ -158,7 +177,7 @@ kimjh.lastName;
 
 ```
 
-## 10. 추상 클래스와 상속 클래스를 이용해서 인스턴스를 생성하라.
+## 10. 추상 클래스와 상속 클래스를 이용해서 인스턴스를 생성하라
 
 ```typescript
 
@@ -186,8 +205,7 @@ kimJH.getFullName()
 
 ```
 
-
-## 11. class를 사용하여 해쉬맵을 작성하라.
+## 11. class를 사용하여 해쉬맵을 작성하라
 
 ```typescript
 
@@ -221,7 +239,7 @@ const kimchi = new Word("kimchi", "food");
 
 ```
 
-## 12. interface를 사용하여 객체의 모양을 지정하라. 
+## 12. interface를 사용하여 객체의 모양을 지정하라
 
 ```typescript
 
@@ -239,7 +257,7 @@ const kimjh : User = {
 
 ```
 
-## 13. 인터페이스가 인터페이스를 상속하는 예시를 작성하라.
+## 13. 인터페이스가 인터페이스를 상속하는 예시를 작성하라
 
 ```typescript
 
@@ -260,7 +278,7 @@ const kim : Player = {
 
 ```
 
-## 14. 클래스가 인터페이스를 상속하는 예시를 작성하라.
+## 14. 클래스가 인터페이스를 상속하는 예시를 작성하라
 
 ```typescript
 
@@ -282,6 +300,7 @@ const kimjh = new Player("kimjh",38);
 ```
 
 ## 15. 로컬 스토리지 API 따라하기 예제
+
 - 로컬 스토리지 클래스를 만들되, 값의 데이터 필드가 문자열, 숫자, 불리안으로 각각 지정될 수 있도록 생성하라.
 
 ```typescript
