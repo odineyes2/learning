@@ -79,7 +79,22 @@ const Player : User = {
 
 ```
 
-## 6. 튜플을 생성하라
+## 6. readOnly & optional property
+
+- readOnly 가 있으면 최초 선언 후 수정할 수 없음
+- key뒤에 ?가 있으면 optional property
+
+```ts
+type Player = {
+    readonly name: string,
+    age: number,
+    hasChild?: boolean
+}
+```
+
+## 7. 튜플을 생성하라
+
+- 요소의 개수와 순서가 정해져서 그에 따라 배열을 선언할 때 사용
 
 ```typescript
 
@@ -87,7 +102,7 @@ const player : [ string, number, boolean ] = [ "kim", 12, true ]
 
 ```
 
-## 7. 함수 정의 및 콜시그니처 사용
+## 8. 함수 정의 및 콜시그니처 사용
 
 - 함수을 정의하기 전에 함수의 매개변수와 리턴값을 먼저 정의할 수 있다.
 - 이것을 콜 시그니처라고 한다.
@@ -129,7 +144,7 @@ const add : Add = function (a,b){
 }
 ```
 
-## 8. optional parameter
+## 9. 복수의 콜시그니처와 optional parameter
 
 ```Typescript
 
@@ -144,7 +159,7 @@ const add: Add = (a,b,c?)=>{
 
 ```
 
-## 9. 제네릭를 이용하여 여러가지 유형의 인자를 복합적으로 가질 수 있는 함수를 정의하라
+## 10. 제네릭를 이용하여 여러가지 유형의 인자를 복합적으로 가질 수 있는 함수를 정의하라(다형성, Polymorphism)
 
 ```typescript
 
@@ -161,31 +176,55 @@ superPrint(["1","2",3]);
 
 ```
 
-## 9. class를 사용하여 객체의 모양을 지정하고 인스턴스를 생성하라
+- 실제로 이와 같이 제네릭을 이용하여 콜시그니처를 작성할 일은 별로 없을 것이다.
+- 주로 다른 패키지를 이용하면서 그 패키지가 제네릭을 이용하여 작성되어 있을 것이다.
+
+## 11. 제네릭을 이용하여 장래 인스턴스 생성 시 타입이 정해질 요소에 포함된 객체의 콜 시그니처를 작성하라
+
+```ts
+
+type Player<E> = {
+    name: string,
+    extraInfo: E,
+}
+
+const kim : Player<number> ={
+    name: "kim",
+    extraInfo: 38,
+}
+
+const dohyun : Player<{apearance:string, iq: number}> = {
+    name: "dohyun",
+    extraInfo: {apearance: "very cute", iq: 130},
+}
+
+```
+
+## 12. class를 사용하여 객체의 모양을 지정하고 인스턴스를 생성하라
 
 ```typescript
 
 class Player {
     constructor(
-        public firstName : String,
-        public lastName : String,        
+        private firstName : string,
+        public lastName : string,
         ){}    
 }
 const kimjh = new Player ("kim", "jh");
-kimjh.firstName;
+kimjh.firstName; // error
 kimjh.lastName;
 
 ```
 
-## 10. 추상 클래스와 상속 클래스를 이용해서 인스턴스를 생성하라
+## 13. 추상 클래스와 상속 클래스를 이용해서 인스턴스를 생성하라
 
 ```typescript
 
 abstract class User {
     constructor(
-        protected firstName : String,
+        protected firstName : string,
         protected lastName : string,
-        protected nickName : String
+        protected nickName : string
     ) {}    
     abstract getNickname() : void
     getFullName(){
@@ -205,7 +244,11 @@ kimJH.getFullName()
 
 ```
 
-## 11. class를 사용하여 해쉬맵을 작성하라
+- 추상 클래스나 추상 메서드는 추후 상속 클래스나 상속 메서드에서 그 구현부분을 작성할 목적으로 공통부분만 작성해둔 클래스, 메서드이다.
+- 추상 메서드 작성 시에는 함수의 구현부분을 작성해서는 안되고 콜 시그니처만 작성한다.
+- 추상 클래스에서 private 키워드로 프로퍼티를 작성하면 이를 상속한 자식 클래스라 할지라도 그 프로퍼티에는 접근할 수 없다. 그때는 protected 키워드를 사용한다.
+
+## 14. class를 사용하여 해쉬맵을 작성하라
 
 ```typescript
 
@@ -239,7 +282,7 @@ const kimchi = new Word("kimchi", "food");
 
 ```
 
-## 12. interface를 사용하여 객체의 모양을 지정하라
+## 15. interface를 사용하여 객체의 모양을 지정하라
 
 ```typescript
 
@@ -257,7 +300,7 @@ const kimjh : User = {
 
 ```
 
-## 13. 인터페이스가 인터페이스를 상속하는 예시를 작성하라
+## 16. 인터페이스가 인터페이스를 상속하는 예시를 작성하라
 
 ```typescript
 
@@ -278,7 +321,7 @@ const kim : Player = {
 
 ```
 
-## 14. 클래스가 인터페이스를 상속하는 예시를 작성하라
+## 17. 클래스가 인터페이스를 상속하는 예시를 작성하라
 
 ```typescript
 
@@ -299,7 +342,7 @@ const kimjh = new Player("kimjh",38);
 
 ```
 
-## 15. 로컬 스토리지 API 따라하기 예제
+## 18. 로컬 스토리지 API 따라하기 예제
 
 - 로컬 스토리지 클래스를 만들되, 값의 데이터 필드가 문자열, 숫자, 불리안으로 각각 지정될 수 있도록 생성하라.
 
@@ -330,7 +373,7 @@ const kimsBooleanStorage = new LocalStorage<Boolean>();
 
 ```
 
-## 16. Blockchain 예제 따라하기
+## 19. Blockchain 예제 따라하기
 
 ```typescript  // Blockchain.ts
 
