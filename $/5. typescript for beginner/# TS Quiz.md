@@ -684,6 +684,17 @@ export function exit(code) {
 
 - $ npm run dev
 
+## 28. DefinitelyTyped
+
+- nodejs의 암호화 모듈인 crypto package는 js로 작성되어 있어서 ts에서 사용하려면 d.ts.파일이 필요하다.
+- DefinitelyTyped은 오픈소스 프로젝트로 여러 개발자가 자원봉사로 정의파일을 작성해놓았다.
+- 적용하는 방법은 다음과 같다.
+- $npm i -D @types/node
+- cryto package는 nodejs의 기본 패키지이므로 위에 것으로 된다.
+- 어떤 패키지가 있는 확인하려면 아래 깃허브 레포지토리에 들어가서 찾아본다.
+- <https://github.com/DefinitelyTyped/DefinitelyTyped>
+- 현재는 최신 노드 모듈은 업데이트 되어서 @types/필요없다...;;
+
 ## 28. Blockchain 예제 따라하기
 
 ```typescript  // Blockchain.ts
