@@ -695,7 +695,7 @@ export function exit(code) {
 - <https://github.com/DefinitelyTyped/DefinitelyTyped>
 - 현재는 최신 노드 모듈은 업데이트 되어서 @types/필요없다...;;
 
-## 28. Blockchain 예제 따라하기
+## 29. Blockchain 예제 따라하기
 
 ```typescript  // Blockchain.ts
 
@@ -750,3 +750,7 @@ blockchain.addBlock("3rd");
 console.log(blockchain.getBlock);
 
 ```
+
+## 30. TS handbook URL
+
+- <https://www.typescriptlang.org/docs/handbook/intro.html>
