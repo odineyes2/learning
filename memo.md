@@ -145,3 +145,9 @@ app.listen(8080, (req,res)=>{
     console.log('waiting on 8080...');
 })
 ```
+
+## 라우터와 에러 처리 미들웨어
+
+```js /app.js
+
+```
