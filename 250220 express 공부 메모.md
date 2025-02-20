@@ -1,6 +1,6 @@
 # 250216 memo
 
-## express 설치
+## 1. express 설치
 
 - $ npm i express morgan dotenv cookie-parser express-session
 - $ npm i nodemon -D
@@ -21,7 +21,7 @@ app.listen(8080, (req,res)=>{
 })
 ```
 
-## 유용한 미들웨어 설치
+## 2. 유용한 미들웨어 설치
 
 ```js app.js
 const express = require('express');
@@ -63,7 +63,7 @@ app.listen(8080, (req,res)=>{
 })
 ```
 
-## 라우터와 에러 처리 미들웨어
+## 3. 라우터와 에러 처리 미들웨어
 
 ```js /app.js
 const express = require("express");
@@ -150,7 +150,7 @@ router.get("/:id", (req, res) => {
 module.exports = router;
 ```
 
-## 비동기 패턴 연습
+## 4. 비동기 패턴 연습
 
 ### fetch 메서드 패턴
 
