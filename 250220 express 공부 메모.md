@@ -149,3 +149,49 @@ router.get("/:id", (req, res) => {
 
 module.exports = router;
 ```
+
+## 비동기 패턴 연습
+
+### fetch 메서드 패턴
+
+```js /routes/homeRouter.js
+const express = require("express");
+
+const router = express.Router();
+
+const fetchData = async () => {
+  const url = "https://jsonplaceholder.typicode.com/posts/";
+  const response = await fetch(url);
+  const json = await response.json();
+  console.log(json);
+};
+
+router.get("/", (req, res) => {
+  fetchData();
+  res.send("<h1>This is for Homepage.</h1>");
+});
+
+module.exports = router;
+```
+
+### axios 메서드 패턴
+
+```js /routes/homeRouter.js
+const express = require("express");
+const axios = require("axios");
+
+const router = express.Router();
+
+const fetchData = async () => {
+  const url = "https://jsonplaceholder.typicode.com/posts/1";
+  const response = await axios.get(url);
+  console.log(response.data.title);
+};
+
+router.get("/", (req, res) => {
+  fetchData();
+  res.send("<h1>This is for Homepage.</h1>");
+});
+
+module.exports = router;
+```
