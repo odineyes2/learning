@@ -195,3 +195,8 @@ router.get("/", (req, res) => {
 
 module.exports = router;
 ```
+
+## 앞으로 해야 할 것
+
+- [ ] db 와 express 서버 연결
+- [ ] express 서버에서 api 서버로 만들기
