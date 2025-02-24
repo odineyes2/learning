@@ -6,16 +6,16 @@
 -$ npm --version
 ```
 
-## node 자체의 버전 업데이트
+## node 자체의 버전 업데이트 (node, npm 같이 업데이트)
 
 ```sh
--$ npm install -g npm  #LTS 로 설치
+-$ nvm install node  #LTS 로 설치
 ```
 
 ## npm 자체의 버전 업데이트
 
 ```sh
--$ npm install -g npm
+-$ npm install -g npm #LTS 로 설치
 ```
 
 ## 모든 글로벌 패키지 업데이트
