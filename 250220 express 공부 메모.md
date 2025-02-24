@@ -196,6 +196,123 @@ router.get("/", (req, res) => {
 module.exports = router;
 ```
 
+## 5. services, apiConfig 코드 분리 및 모듈 재활용 패턴 연습
+
+```js /services/fetchData.js
+const axios = require("axios");
+
+const fetchData = async (url) => {
+  const response = await axios.get(url);
+  return response.data;
+};
+
+module.exports = fetchData;
+
+```
+
+```js /config/apiConfig.js
+const API_CONFIG = {
+  POSTS_URL: "https://jsonplaceholder.typicode.com/posts/",
+  USERS_URL: "https://jsonplaceholder.typicode.com/users/",
+  COMMENTS_URL: "https://jsonplaceholder.typicode.com/comments/",
+};
+
+module.exports = API_CONFIG;
+```
+
+- 여러 페이지에서 공통적으로 사용되는 코드는 따로 관리하는 것이 좋다.
+- 익스프레스에서 흔히 사용되는 폴더 구조이다.
+- 그러면 본 라우터 페이지로 다음과 같이 수정한다.
+
+```js /routes/home.js
+// api에서 전체 자료를 읽어와서 타이틀과 링크를 제공하는 페이지.
+const express = require("express");
+const fetchData = require("../services/fetchData"); // 모듈화한 함수를 재활용하기 위해 임포트
+const { POSTS_URL } = require("../config/apiConfig"); // 모듈화한 api url를 재활용하기 위해 임포트
+
+const router = express.Router();
+
+router.get("/", async (req, res) => {
+  const posts = await fetchData(POSTS_URL);
+  let html = `<h1>Post Titles(${posts.length})</h1><ul>`;
+  posts.forEach((post) => {
+    html += `<li><a href=/user/${post.id}>${post.title}</a></li>`;
+  });
+  html += `</ul>`;
+  res.send(html);
+});
+
+module.exports = router;
+```
+
+```js /routes/post.js
+const express = require("express");
+const fetchData = require("../services/fetchData");
+const { POSTS_URL } = require("../config/apiConfig");
+
+const router = express.Router();
+
+router.get("/", (req, res) => {
+  res.send("This is for post Page.");
+});
+router.get("/:id", async (req, res) => {
+  const id = req.params.id;
+  const url = `${POSTS_URL}${id}`;
+  const post = await fetchData(url);
+  let html = `<h2>This is for id ${id} post Page.</h2><ul>`;
+  html += `<li>UserId: ${post.userId}</li>`;
+  html += `<li>id: ${post.id}</li>`;
+  html += `<li>Title: ${post.title}</li>`;
+  html += `<li>Body: ${post.body}</li>`;
+  html += `</ul>`;
+  res.send(html);
+});
+
+module.exports = router;
+```
+
+## 6. try & catch 문으로 api 네트워크 에러 발생 시 서버 터짐 방지
+
+```js /routes/post.js
+const express = require("express");
+const fetchData = require("../services/fetchData");
+const { POSTS_URL } = require("../config/apiConfig");
+
+const router = express.Router();
+
+router.get("/", (req, res) => {
+  res.send("This is for post Page.");
+});
+
+router.get("/:id", async (req, res) => {
+  const id = req.params.id;
+  const url = `${POSTS_URL}${id}`;
+
+  try {
+    const post = await fetchData(url);
+
+    if (!post || Object.keys(post).length === 0) {
+      return res.status(404).send(`<h2>Post with ID ${id} not found.</h2>`);
+    }
+
+    let html = `<h2>This is for id ${id} post Page.</h2><ul>`;
+    html += `<li>UserId: ${post.userId}</li>`;
+    html += `<li>id: ${post.id}</li>`;
+    html += `<li>Title: ${post.title}</li>`;
+    html += `<li>Body: ${post.body}</li>`;
+    html += `</ul>`;
+    return res.send(html);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send("<h2>Internal Server Error</h2>");
+  }
+});
+
+module.exports = router;
+```
+
+- 
+
 ## 앞으로 해야 할 것
 
 - [ ] db 와 express 서버 연결
